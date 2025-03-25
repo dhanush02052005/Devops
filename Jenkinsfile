@@ -1,19 +1,18 @@
-
 pipeline {
     agent any
 
     environment {
         IMAGE_NAME = "dhanush0025/my-app"
         REGISTRY = "docker.io"
-        DOCKER_CREDENTIALS_ID = "docker-hub-creds"
-        GITHUB_CREDENTIALS_ID = "github"
-        APP_DIR = "/opt/docker-kec"
+        APP_DIR = "/home/vboxuser/Downloads"
+        DOCKER_USER = "dhanush0025"          // Replace with your Docker Hub username
+        DOCKER_PASS = "dhanush2005"          // Replace with your Docker Hub password
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git credentialsId: GITHUB_CREDENTIALS_ID, url: 'https://github.com/dhanush02052005/Devops.git', branch: 'main'
+                git url: 'https://github.com/dhanush02052005/Devops', branch: 'main'
             }
         }
 
@@ -28,9 +27,7 @@ pipeline {
         stage('Login to Docker Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    }
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
@@ -54,7 +51,7 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline executed successfully! '
+            echo 'Pipeline executed successfully!'
         }
         failure {
             echo 'Pipeline failed! Check the logs for errors.'
